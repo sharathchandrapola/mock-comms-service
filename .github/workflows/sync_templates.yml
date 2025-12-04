@@ -5,8 +5,6 @@ on:
   push:
     branches:
       -'**'
-    paths:
-      - 'src/app/lib/templates/lyft/**/*.j2'
 
 jobs:
   sync-templates:
