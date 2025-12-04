@@ -3,6 +3,8 @@ name: Mock Sync Test
 on:
   workflow_dispatch:
   push:
+    branches:
+        -'**'
 
 jobs:
   sync-templates:
