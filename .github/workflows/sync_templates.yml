@@ -45,7 +45,7 @@ jobs:
         mkdir -p target_repo/html-templates/lyft/
         # -r recursive copy keeps folder tree
         # -u update only if newer
-        cp -r -u build/templates/lyft/* target_repo/html-templates/lyft/
+        cp -r -u source_repo/build/templates/lyft/* target_repo/html-templates/lyft/
 
     - name: Commit and push changes
       working-directory: target_repo
