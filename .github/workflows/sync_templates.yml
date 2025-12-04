@@ -42,10 +42,14 @@ jobs:
 
     - name: Sync HTML files
       run: |
+        echo "contents of build folder"
+        ls -R source_repo/build/templates/lyft/
         mkdir -p target_repo/html-templates/lyft/
         # -r recursive copy keeps folder tree
         # -u update only if newer
-        cp -r -u source_repo/build/templates/lyft/* target_repo/html-templates/lyft/
+        cp -r source_repo/build/templates/lyft/* target_repo/html-templates/lyft/
+        echo "contents of target repo after copy"
+        ls -R target_repo/html-templates/lyft/
 
     - name: Commit and push changes
       working-directory: target_repo
