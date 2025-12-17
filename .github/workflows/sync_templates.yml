@@ -1,23 +1,24 @@
 name: Mock Sync Test
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-        - 'main'
-        - 'CALYFT-*'
-    paths:
-        - 'src/app/lib/templates/lyft/**/*.j2'
 
-pull_request:
-  branches:
-    - 'main'
-  paths:
-    - 'src/app/lib/templates/lyft/**/*.j2'
+    workflow_dispatch:
+    push:
+        branches:
+            - 'main'
+            - 'CALYFT-*'
+        paths:
+            - 'src/app/lib/templates/lyft/**/*.j2'
+
+    pull_request:
+        branches:
+            - 'main'
+        paths:
+            - 'src/app/lib/templates/lyft/**/*.j2'
 
 concurrency:
-  group: sync-templates-${{ github.ref }}
-  cancel-in-progress: false
+    group: sync-templates-${{ github.ref }}
+    cancel-in-progress: false
 
 jobs:
   sync-templates:
