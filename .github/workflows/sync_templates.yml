@@ -1,12 +1,24 @@
 name: Mock Sync Test
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-        - 'main'
-    paths:
-        - 'src/app/lib/templates/lyft/**/*.j2'
+
+    workflow_dispatch:
+    push:
+        branches:
+            - 'main'
+            - 'CALYFT-*'
+        paths:
+            - 'src/app/lib/templates/lyft/**/*.j2'
+
+    pull_request:
+        branches:
+            - 'main'
+        paths:
+            - 'src/app/lib/templates/lyft/**/*.j2'
+
+concurrency:
+    group: sync-templates-${{ github.ref }}
+    cancel-in-progress: false
 
 jobs:
   sync-templates:
@@ -14,15 +26,17 @@ jobs:
 
     steps:
     - name: Checkout comms-service repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: source_repo
+        fetch-depth: 0
 
     - name: Set up workspace
       run: mkdir -p build/templates/lyft/
 
     - name: Convert .j2 to .html
       working-directory: source_repo
+      shell: bash
       run: |
         ROOT_DIR=$(pwd)
         cd src/app/lib/templates/lyft
@@ -33,12 +47,24 @@ jobs:
         done
 
     - name: Checkout translations repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: sharathchandrapola/mock-translations
         token: ${{ secrets.TRANSLATIONS_REPO_PAT }}
         path: target_repo
         ref: main
+        fetch-depth: 0
+
+    - name: Update target repo to latest (rebase)
+      working-directory: target_repo
+      shell: bash
+      run: |
+        set -e
+        git fetch origin main
+        git checkout main
+        git rebase origin/main
+        git pull --rebase origin main
+        echo "Rebased target repo to latest main"
 
     - name: Sync HTML files
       run: |
@@ -62,5 +88,5 @@ jobs:
         else
             echo "Changes detected. pushing to master"
             git commit -m "sync updated templated from comms-service"
-            git push
+            git push origin main
         fi
